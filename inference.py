@@ -10,10 +10,6 @@ MANDATORY ENV VARS:
   HF_TOKEN       API key
   ENV_BASE_URL   Env server    (default: http://localhost:7860)
 
-STDOUT FORMAT (strictly enforced):
-  [START] task=<name> env=<benchmark> model=<model>
-  [STEP]  step=<n> action=<str> reward=<0.00> done=<true|false> error=<msg|null>
-  [END]   success=<true|false> steps=<n> score=<0.000> rewards=<r1,r2,...>
 """
 
 import asyncio
@@ -64,7 +60,7 @@ For issue_refund, use the EXACT 'order_value' from get_shipment_status output.
 """).strip()
 
 
-# ── Logging (mandatory stdout format) ─────────────────────────────────────── #
+# Logging 
 
 def log_start(task: str, env: str, model: str) -> None:
     print(f"[START] task={task} env={env} model={model}", flush=True)
@@ -91,7 +87,7 @@ def log_end(success: bool, steps: int, score: float, rewards: List[float]) -> No
     )
 
 
-# ── LLM call ──────────────────────────────────────────────────────────────── #
+# LLM call
 
 def get_model_action(
     client: OpenAI,
@@ -149,7 +145,7 @@ def fallback_action(step: int, obs: dict) -> str:
     return json.dumps({"tool_name": tools[0] if tools else "get_shipment_status", "tool_args": {}})
 
 
-# ── Episode runner ─────────────────────────────────────────────────────────── #
+# Episode runner 
 
 async def run_episode(
     client: OpenAI,
@@ -167,7 +163,7 @@ async def run_episode(
     log_start(task=task_id, env=BENCHMARK, model=MODEL_NAME)
 
     try:
-        # ── Reset ── #
+        # Reset 
         resp = await http.post("/reset", params={"task_id": task_id})
         resp.raise_for_status()
         reset_data = resp.json()
@@ -176,7 +172,7 @@ async def run_episode(
         last_reward = 0.0
         done        = False
 
-        # ── Steps ── #
+        # Steps 
         for step in range(1, max_steps + 1):
             if done:
                 break
@@ -223,7 +219,7 @@ async def run_episode(
         log_end(success=success, steps=steps_taken, score=score, rewards=rewards)
 
 
-# ── Main ──────────────────────────────────────────────────────────────────── #
+# Main
 
 async def main() -> None:
     client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)

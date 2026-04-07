@@ -87,9 +87,7 @@ class ShipmentEnv:
         self._shipments = json.loads((DATA_DIR / "shipments.json").read_text())
         self._policies = json.loads((DATA_DIR / "policies.json").read_text())
 
-    # ------------------------------------------------------------------ #
-    # OpenEnv interface                                                     #
-    # ------------------------------------------------------------------ #
+    # OpenEnv interface                                                    
 
     def reset(self, task_id: str = "task1") -> ResetResult:
         """Start a new episode. Returns initial observation."""
@@ -231,9 +229,7 @@ class ShipmentEnv:
     def list_tasks(self) -> List[dict]:
         return [t.dict() for t in TASKS]
 
-    # ------------------------------------------------------------------ #
-    # Helpers                                                              #
-    # ------------------------------------------------------------------ #
+    # Helpers                                                              
 
     def _get_shipment(self, task_id: str) -> dict:
         for s in self._shipments:

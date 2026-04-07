@@ -73,9 +73,7 @@ class ToolRegistry:
         except Exception as exc:
             return f"ERROR: tool '{tool_name}' raised an exception: {exc}"
 
-    # ------------------------------------------------------------------ #
-    # Individual tool implementations                                       #
-    # ------------------------------------------------------------------ #
+    # Individual tool implementations                                      
 
     def _tool_get_shipment_status(self, args: dict, state: dict) -> str:
         s = state["shipment"]
