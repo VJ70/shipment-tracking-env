@@ -1,0 +1,34 @@
+{
+  "delay_notification_window_hours": 2,
+  "failed_delivery_max_rebook_attempts": 3,
+  "lost_package_threshold_days": 5,
+  "claim_eligible_after_days": 5,
+  "refund_eligible": true,
+  "reship_eligible": true,
+  "max_refund_without_approval": 500.00,
+  "carriers": {
+    "FedEx": {
+      "claim_url": "fedex.com/claims",
+      "sla_days": 5,
+      "rebook_window_days": 7,
+      "support_phone": "1-800-463-3339"
+    },
+    "UPS": {
+      "claim_url": "ups.com/claims",
+      "sla_days": 5,
+      "rebook_window_days": 5,
+      "support_phone": "1-800-742-5877"
+    },
+    "USPS": {
+      "claim_url": "usps.com/claims",
+      "sla_days": 7,
+      "rebook_window_days": 15,
+      "support_phone": "1-800-275-8777"
+    }
+  },
+  "notification_templates": {
+    "delay": "Your shipment {shipment_id} is delayed due to {reason}. New estimated delivery: {new_date}.",
+    "failed_delivery": "We attempted delivery of your order {order_id} but no one was home. We will reattempt on {rebook_date}.",
+    "lost": "We are sorry to inform you that your shipment {shipment_id} appears to be lost. A claim has been filed and a replacement will be sent."
+  }
+}
