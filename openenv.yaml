@@ -1,0 +1,120 @@
+name: shipment-tracking-env
+version: "1.0.0"
+description: >
+  A real-world shipment exception handling environment.
+  An AI agent resolves logistics issues by calling tools to notify customers,
+  rebook failed deliveries, file carrier claims, issue refunds, and reship
+  lost packages. Simulates a genuine tier-1 logistics support workflow.
+
+tags:
+  - openenv
+  - logistics
+  - tool-use
+  - real-world
+
+observation_space:
+  type: object
+  description: "Structured observation returned after each step"
+  fields:
+    shipment:
+      type: object
+      description: "Full shipment record including status, carrier, customer, value"
+    tool_result:
+      type: string
+      nullable: true
+      description: "JSON string result from the last tool call (null on reset)"
+    available_tools:
+      type: array
+      items: string
+      description: "List of tool names the agent may call this episode"
+    turn:
+      type: integer
+      description: "Current turn number (0 after reset)"
+    message:
+      type: string
+      description: "Human-readable status and tool descriptions"
+
+action_space:
+  type: object
+  description: "Tool call the agent wants to execute"
+  fields:
+    tool_name:
+      type: string
+      description: "Name of the tool to invoke"
+    tool_args:
+      type: object
+      description: "Key-value arguments for the tool"
+
+tasks:
+  - id: task1
+    name: "Delay Notification"
+    difficulty: easy
+    max_steps: 6
+    success_threshold: 0.7
+    description: >
+      A shipment is delayed due to weather. The agent must check the shipment
+      status, send a meaningful notification to the customer explaining the
+      delay, then close the ticket.
+    tools:
+      - get_shipment_status
+      - notify_customer
+      - close_ticket
+
+  - id: task2
+    name: "Failed Delivery Rebook"
+    difficulty: medium
+    max_steps: 9
+    success_threshold: 0.7
+    description: >
+      A delivery attempt failed because no one was home. The agent must verify
+      shipment status, check carrier SLA compliance, rebook a new delivery date,
+      notify the customer about the rebooked delivery, and close the ticket.
+    tools:
+      - get_shipment_status
+      - notify_customer
+      - check_carrier_sla
+      - rebook_delivery
+      - close_ticket
+
+  - id: task3
+    name: "Lost Package Full Resolution"
+    difficulty: hard
+    max_steps: 13
+    success_threshold: 0.7
+    description: >
+      A package is confirmed lost (7 days overdue, SLA breached). The agent
+      must check status, verify SLA breach, file an official carrier claim,
+      issue a full refund for the exact order value, reship the order,
+      notify the customer, and close the ticket with detailed notes.
+    tools:
+      - get_shipment_status
+      - notify_customer
+      - check_carrier_sla
+      - file_carrier_claim
+      - issue_refund
+      - reship_order
+      - close_ticket
+
+endpoints:
+  health: "GET /health"
+  reset:  "POST /reset"
+  step:   "POST /step"
+  state:  "GET /state"
+  tasks:  "GET /tasks"
+
+reward:
+  type: float
+  range: [0.0, 1.0]
+  description: >
+    Cumulative partial-credit reward. Each correct tool call earns a component
+    score. The reward at each step reflects total progress made so far.
+    Final reward is the score at episode end.
+  partial_credit: true
+  penalises:
+    - wrong_refund_amount
+    - missing_resolution_notes
+    - trivially_short_notifications
+
+docker:
+  port: 7860
+  start_command: "uvicorn main:app --host 0.0.0.0 --port 7860"
