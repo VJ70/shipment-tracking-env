@@ -1,7 +1,8 @@
 # Shipment Tracking Agent Environment
 
 An OpenEnv-compliant environment where an AI agent resolves real-world
-shipment exceptions — delays, failed deliveries, and lost packages.
+shipment exceptions — delays, failed deliveries, and lost packages.  
+Delpoyed on HugginFace:https://huggingface.co/spaces/VJ7-7/shipment-tracking-env
 
 ## Tasks
 | ID | Name | Difficulty | Max Steps | Tools Required |
