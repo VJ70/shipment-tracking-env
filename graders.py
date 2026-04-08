@@ -1,6 +1,6 @@
 """
 Graders for the Shipment Tracking Agent Environment.
-All graders are deterministic and return a float in [0.0, 1.0].
+All graders are deterministic and return a float in (0.0, 1.0) exclusive.
 
 Scoring philosophy:
   - Partial credit for each correct action taken
@@ -12,6 +12,12 @@ from __future__ import annotations
 from typing import Any, Dict, List
 
 
+def _clamp(score: float) -> float:
+    """Clamp score to strictly open interval (0.0, 1.0)."""
+    EPSILON = 1e-6
+    return round(min(max(score, EPSILON), 1.0 - EPSILON), 6)
+
+
 def grade_task1(history: List[dict], state: Dict[str, Any], shipment: dict) -> float:
     """
     Task 1 (Easy) — Delay Notification.
@@ -20,7 +26,7 @@ def grade_task1(history: List[dict], state: Dict[str, Any], shipment: dict) -> f
       1. Check the shipment status              → 0.30
       2. Notify the customer with a real message → 0.40
       3. Close the ticket                        → 0.30
-    Max = 1.0
+    Max = 1.0 (clamped to <1.0)
     """
     score = 0.0
 
@@ -40,7 +46,7 @@ def grade_task1(history: List[dict], state: Dict[str, Any], shipment: dict) -> f
     if state.get("status") == "closed" and state.get("resolution_notes"):
         score += 0.30
 
-    return round(min(score, 1.0), 4)
+    return _clamp(score)
 
 
 def grade_task2(history: List[dict], state: Dict[str, Any], shipment: dict) -> float:
@@ -53,7 +59,7 @@ def grade_task2(history: List[dict], state: Dict[str, Any], shipment: dict) -> f
       3. Rebook the delivery with a date         → 0.25
       4. Notify the customer about the rebook    → 0.15
       5. Close the ticket                        → 0.20
-    Max = 1.0
+    Max = 1.0 (clamped to <1.0)
     """
     score = 0.0
 
@@ -73,7 +79,7 @@ def grade_task2(history: List[dict], state: Dict[str, Any], shipment: dict) -> f
     if state.get("status") == "closed" and state.get("resolution_notes"):
         score += 0.20
 
-    return round(min(score, 1.0), 4)
+    return _clamp(score)
 
 
 def grade_task3(history: List[dict], state: Dict[str, Any], shipment: dict) -> float:
@@ -88,7 +94,7 @@ def grade_task3(history: List[dict], state: Dict[str, Any], shipment: dict) -> f
       5. Reship the order                       → 0.20
       6. Notify the customer                    → 0.05
       7. Close the ticket with notes            → 0.10
-    Max = 1.0
+    Max = 1.0 (clamped to <1.0)
     """
     score = 0.0
 
@@ -125,7 +131,7 @@ def grade_task3(history: List[dict], state: Dict[str, Any], shipment: dict) -> f
     if state.get("status") == "closed" and len(state.get("resolution_notes", "")) >= 10:
         score += 0.10
 
-    return round(min(score, 1.0), 4)
+    return _clamp(score)
 
 
 def get_grader(task_id: str):
