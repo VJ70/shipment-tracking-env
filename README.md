@@ -13,7 +13,7 @@ Delpoyed on HugginFace:https://huggingface.co/spaces/VJ7-7/shipment-tracking-env
 
 ## Reward Structure
 Rewards are partial — the agent earns score for each correct step,
-not just task completion. All rewards are in range [0.0, 1.0].
+not just task completion. All rewards are in range [0, 1].
 
 ## Setup
 ```bash
@@ -28,10 +28,3 @@ export MODEL_NAME=gpt-4o-mini
 export HF_TOKEN=your_token_here
 python inference.py
 ```
-
-## API
-- POST /reset?task_id=task1
-- POST /step?session_id=<id>  body: {"tool_name":"...","tool_args":{}}
-- GET  /state?session_id=<id>
-- GET  /tasks
-- GET  /health
